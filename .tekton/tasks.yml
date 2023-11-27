@@ -28,3 +28,28 @@ spec:
       # Delete files and directories starting with . but excluding ..
       rm -rf "${WORKSPACE_SOURCE_PATH)"/.[!.]*
       # Delete files and directories starting with .. plus any other character
+
+
+---
+apiVersion: tekton.dev/v1betal
+kind: Task
+metadata: 
+  name: nose
+spec: 
+  workspaces:
+   - name : source
+   params: 
+    -name: args
+     description: Arguments to pass to nose
+     type: string
+     default: "-v"
+  steps: 
+    -name: nosetests
+    images: python: 3.9-slim
+    workingDir: $(workspaces.source.path)
+    script: |
+    #!/bin/bash
+    set -e
+    python -m pip install --upgrade pip wheel
+    pip install -r requirements.txt
+    nosetests $(params.args)
